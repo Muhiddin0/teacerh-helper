@@ -1,0 +1,28 @@
+.resouce-title:hover span {
+  width: 100%;
+}
+
+.resouce-title span {
+  transition: 0.2s;
+  animation: resour-title 1s 1 cubic-bezier(0.26, 0.88, 0.51, 1.29);
+}
+@keyframes resour-title {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 80%;
+  }
+}
+/* 
+.resource-class.moderator {
+} */
+.resource-class.moderator .action-box {
+  width: 0px;
+  height: 100%;
+  transition: 0.3s;
+  overflow: hidden;
+}
+.resource-class.moderator:hover .action-box {
+  width: 30px;
+}

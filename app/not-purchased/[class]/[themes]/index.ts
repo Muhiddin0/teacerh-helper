@@ -1,0 +1,1 @@
+export { MyResourseClass } from "./page";
