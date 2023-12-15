@@ -5,16 +5,26 @@ import "../data-tables-css.css";
 import "../satoshi.css";
 import { useState, useEffect } from "react";
 import Loader from "@/components/common/Loader";
+import { useRouter } from "next/navigation";
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+
+  const router = useRouter()
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [loading, setLoading] = useState<boolean>(false);
 
+  useEffect(() => {
+    let user = window.localStorage.getItem('user')
+
+    if (user)
+      router.push("/")
+  })
   // useEffect(() => {
   //   setTimeout(() => setLoading(false), 1000);
   // }, []);

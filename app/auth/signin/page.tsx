@@ -1,15 +1,85 @@
-import React from "react";
+'use client'
+
+// React &  Next
+import React, { useRef, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
+import { useRouter } from "next/navigation";
 import { Metadata } from "next";
+
+// components
+import { ButtonLoader } from "@/components/button-loader";
+
+// services API
+import { Login } from '@/services'
+
+// interfcae
 export const metadata: Metadata = {
   title: "Signin Page | Next.js E-commerce Dashboard Template",
   description: "This is Signin page for TailAdmin Next.js",
-  // other metadata
 };
 
+
 const SignIn: React.FC = () => {
+
+  // navifate
+  const router = useRouter()
+
+  // refs
+  const usernamedRef = useRef<HTMLInputElement>(0)
+  const passwordRef = useRef<HTMLInputElement>(0)
+
+  // states
+  const [username, setUsername] = useState<string>("")
+  const [password, setPassword] = useState<string>("")
+  const [requestProcced, setRequestProcced] = useState<boolean>(false)
+
+  // form validator
+  const formValid = (username: string, password: string) => {
+    let formIsValid = true
+    if (username.length < 4) {
+      usernamedRef.current.style.border = "1px solid red"
+      formIsValid = false
+    }
+    if (password.length < 4) {
+      passwordRef.current.style.border = "1px solid red"
+      formIsValid = false
+    }
+    return formIsValid
+  }
+
+  // erro remove
+  const formErrorRemover = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.target.style = ""
+  }
+
+  // Login handler
+  const LoginHandler = async () => {
+
+    // form valid
+    const formIsValid = formValid(username, password)
+    if (!formIsValid) return
+
+    setRequestProcced(true)
+    // set Loading button
+
+
+    // send Form
+    let LoginSend = await Login(username, password)
+    let loginStatus = LoginSend.data
+
+    // unset loadin button
+    setRequestProcced(false)
+
+    // check request status
+    if (!loginStatus) return
+
+    // set and redirce succes user
+    let token = LoginSend.data['data']['token']
+    window.localStorage.setItem('user', token)
+    router.push('/')
+
+  }
+
   return (
     <>
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -147,14 +217,16 @@ const SignIn: React.FC = () => {
                 Kirish
               </h2>
 
-              <form>
+              <form onSubmit={e => e.preventDefault()}>
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Email yoki telfon raqami kiriting
                   </label>
                   <div className="relative">
                     <input
-                      type="email"
+                      onChange={(e) => { setUsername(e.target.value), formErrorRemover(e) }}
+                      type="text"
+                      ref={usernamedRef}
                       placeholder="905650213"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     />
@@ -185,6 +257,8 @@ const SignIn: React.FC = () => {
                   </label>
                   <div className="relative">
                     <input
+                      ref={passwordRef}
+                      onChange={(e) => { setPassword(e.target.value), formErrorRemover(e) }}
                       type="password"
                       placeholder="6+ belgilar, 1 bosh harf"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
@@ -214,12 +288,16 @@ const SignIn: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="mb-5">
-                  <input
-                    type="submit"
-                    value="Sign In"
-                    className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
-                  />
+                <div className="flex justify-center items-center mb-5">
+                  <button disabled={false} className="flex justify-center items-center gap-3 w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90" onClick={LoginHandler} type="submit">
+                    {
+                      requestProcced ?
+                        <ButtonLoader /> : null
+                    }
+                    <span>
+                      Sign In
+                    </span>
+                  </button>
                 </div>
 
                 <button className="flex w-full items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50">

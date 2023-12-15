@@ -9,16 +9,26 @@ import Loader from "@/components/common/Loader";
 
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
+import { useRouter } from "next/navigation";
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+
+  const router = useRouter()
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [loading, setLoading] = useState<boolean>(true);
 
+  useEffect(() => {
+    let user = window.localStorage.getItem('user')
+    if (!user)
+      router.push('/auth/signin')
+
+  }, [])
   useEffect(() => {
     setTimeout(() => setLoading(false), 1000);
   }, []);

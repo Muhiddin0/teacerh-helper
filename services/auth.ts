@@ -1,30 +1,45 @@
 import { instance } from "./api";
+import axios from "axios";
 
-export const Login = (username: string, password: string) => {
+export const Login = async (username: string, password: string): any => {
   let data = JSON.stringify({
-    username: password,
-    password: username,
+    username: "admin@gmail.com",
+    password: "Samandar001@",
   });
 
   let config = {
     method: "post",
     maxBodyLength: Infinity,
-    url: "https://teacher.iprogrammer.uz/api/auth/login",
+    url: "/api/auth/login",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      Authorization:
-        "Bearer 17|DlqRN7krD5VyDm64DrN5BPJi2hnqqNVzaise5Efof262b562",
     },
     data: data,
   };
 
-  instance
-    .request(config)
-    .then((response) => {
-      console.log(JSON.stringify(response.data));
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  let response = await instance.request(config);
+
+  return response;
+};
+
+export const GetMe = (tokken: string) => {
+  const axios = require("axios");
+  const FormData = require("form-data");
+  const data = new FormData();
+
+  let config = {
+    method: "get",
+    maxBodyLength: Infinity,
+    url: "/auth/me",
+    headers: {
+      Accept: "application/json",
+      Authorization:
+        "Bearer 18|OTEYOowFPNQ4D2uro8khJiDmDD2OOWanZf2ygdJSeb532b6d",
+      ...data.getHeaders(),
+    },
+    data: data,
+  };
+
+  return instance.request(config);
 };
