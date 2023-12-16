@@ -9,7 +9,6 @@ import Loader from "@/components/common/Loader";
 
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
-import { useRouter } from "next/navigation";
 import { Classes, Science } from "@/services/bekome-moderator";
 
 export default function RootLayout({
@@ -18,18 +17,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
 
-  const router = useRouter()
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    let user = window.localStorage.getItem('user')
-    if (!user)
-      router.push('/auth/signin')
+    setTimeout(() => setLoading(false), 1000);
+  }, []);
 
-
+  useEffect(() => {
     // set class
     const setClass = async () => {
       let classes = await Classes()
@@ -45,14 +42,7 @@ export default function RootLayout({
       window.localStorage.setItem('science', scienseItems)
     }
     setSciense()
-
-  }, [])
-
-
-  useEffect(() => {
-    setTimeout(() => setLoading(false), 1000);
-  }, []);
-
+  })
   return (
     <html lang="en">
       <body suppressHydrationWarning={true}>

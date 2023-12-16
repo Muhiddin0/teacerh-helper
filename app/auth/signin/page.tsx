@@ -12,7 +12,7 @@ import { ButtonLoader } from "@/components/button-loader";
 import { useSelector, useDispatch } from 'react-redux'
 
 // services API
-import { Login } from '@/services'
+import { Login, GetMe } from '@/services'
 
 import { RootState } from '@/redux/store'
 
@@ -24,7 +24,6 @@ export const metadata: Metadata = {
 
 
 const SignIn: React.FC = () => {
-
 
   const messages = useSelector((state: RootState) => state.messages)
   const dispatch = useDispatch()
@@ -72,22 +71,32 @@ const SignIn: React.FC = () => {
     setRequestProcced(true)
 
     // send Form
-    try {
-      let LoginSend = await Login(username, password)
-      let loginStatus = LoginSend.data
+    Login(username, password)
+      .then(reponse => {
 
-      // check request status
-      if (!loginStatus) return
+        // set and redirce succes user
+        let userToken = reponse.data['data']['token']
+        window.localStorage.setItem('user', userToken)
 
-      // set and redirce succes user
-      let token = LoginSend.data['data']['token']
-      window.localStorage.setItem('user', token)
-      router.push('/')
-    }
-    catch {
-      setMessage([...message, "Foydalanuvchi nomi yoki parol xato"])
-      setRequestProcced(false)
-    }
+        if (userToken) {
+          GetMe(userToken).then(r => {
+            let role = r.data.data.role.name
+            if (role == "moderator")
+              router.push('/moderator')
+            else if (role == "admin")
+              router.push('/admin')
+            else if (role == "teacher")
+              router.push('/')
+          })
+        }
+
+        setRequestProcced(false)
+      })
+      .catch(() => {
+        setMessage([...message, "Foydalanuvchi nomi yoki parol xato"])
+        setRequestProcced(false)
+      })
+
   }
 
   return (

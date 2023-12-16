@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 
 import { Provider } from 'react-redux'
 import { store } from "@/redux/store";
+import { GetMe } from "@/services";
 
 export default function RootLayout({
   children,
@@ -17,21 +18,29 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
 
-
   const router = useRouter()
-
 
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    let user = window.localStorage.getItem('user')
+    let userToken: string | null = window.localStorage.getItem('user')
 
-    if (user)
-      router.push("/")
+    if (userToken) {
+      GetMe(userToken).then(r => {
+        let role = r.data.data.role.name
+        if (role == "moderator")
+          router.push('/moderator')
+        else if (role == "admin")
+          router.push('/admin')
+        else if (role == "teacher")
+          router.push('/')
+      })
+    }
   })
-  // useEffect(() => {
-  //   setTimeout(() => setLoading(false), 1000);
-  // }, []);
+
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 1000);
+  }, []);
 
   return (
     <Provider store={store}>
@@ -49,7 +58,6 @@ export default function RootLayout({
                     {children}
                   </div>
                 </main>
-
               </div>
             )}
           </div>

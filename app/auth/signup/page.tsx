@@ -11,23 +11,178 @@ export const metadata: Metadata = {
 
 // assets
 import Logo from '../../assets/icons/logo.svg'
+import { ButtonLoader } from "@/components/button-loader";
+import { Register, Resset, RessetConfirm, confirmCode } from "@/services/auth";
+import { useRouter } from "next/navigation";
 
 const SignUp: React.FC = () => {
 
-  const timerRef = createRef()
+  const router = useRouter()
 
-  const [smsTimer, SetSmsTimer] = useState<number>(6)
-  const [smsVerifayStep, setSmsVerifayStep] = useState<boolean>(true)
+  // ref
+  const usernameRef = createRef<HTMLInputElement>(null)
+  const password1Ref = createRef<HTMLInputElement>(0)
+  const password2Ref = createRef<HTMLInputElement>(0)
+  const codeRef = createRef<HTMLInputElement>()
 
-  const SMSverifay = (e: React.FormEvent<HTMLFormElement>) => {
+  // states
+  const [username, setUsername] = useState<string>("")
+  const [password1, setPassword1] = useState<string>("")
+  const [password2, setPassword2] = useState<string>("")
+  const [code, setCode] = useState<number>(0)
+  const [smsTimer, SetSmsTimer] = useState<number>(1200)
+  const [runTimer, setRunTimer] = useState<boolean>(false)
+  const [smsVerifayStep, setSmsVerifayStep] = useState<boolean>(false)
+  const [buttonIsLoad, setButtonIsLoad] = useState<boolean>(false)
+  const [message, setMessag] = useState<string[]>([])
+
+  const [minute, setMinute] = useState<number>(2)
+  const [secunde, setSecunde] = useState<number>(60)
+
+  const formIsValid = () => {
+    let formIsValid = true
+
+    if (username < 4) {
+      usernameRef.current.style.border = "1px solid red"
+      formIsValid = false
+    }
+    if (password1 < 8) {
+      password1Ref.current.style.border = "1px solid red"
+      formIsValid = false
+    }
+    if (password2 < 8) {
+      password2Ref.current.style.border = "1px solid red"
+      formIsValid = false
+    }
+    if (password1 != password2) {
+      password1Ref.current.style.border = "1px solid red"
+      password2Ref.current.style.border = "1px solid red"
+      formIsValid = false
+    }
+
+    return formIsValid
+  }
+
+  // const Resset = () => {
+  //   Resset()
+  // }
+  const HandleRegister = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setSmsVerifayStep(true)
+
+    if (!formIsValid()) return
+    setButtonIsLoad(true)
+
+    let username = usernameRef.current.value
+
+    console.log(username);
+
+    function isOnlyDigits(text: string) {
+      return /^\d+$/.test(text);
+    }
+
+    Register(username)
+      .then(response => {
+        console.log(response);
+        setSmsVerifayStep(true)
+        setRunTimer(true)
+        setButtonIsLoad(false)
+      })
+      .catch(error => {
+
+        console.log(error);
+
+        let responseMessage = error.response.data.message
+        setMessag([...message, responseMessage])
+
+        if (responseMessage == "Foydalanuvchi tasdiqlanmagan") {
+
+          RessetConfirm(username)
+            .then(() => {
+              setSmsVerifayStep(true)
+              setMessag([...message, "Sizga 6 xonali tasdilash code yuborildi"])
+            })
+            .catch((error) => {
+              let reponseMessage = error.response.data.message
+              setMessag([...message, reponseMessage])
+            })
+
+        }
+        setButtonIsLoad(false)
+      })
+  }
+
+  const smsFormValid = () => {
+    let formIsValid = true
+    if (String(code).length != 6) {
+      codeRef.current.style.border = '1px solid red'
+      formIsValid = false
+    }
+    return formIsValid
+  }
+
+  const HandleVerify = (e) => {
+    e.preventDefault()
+
+    if (!smsFormValid()) return
+
+    confirmCode(username, code)
+      .then((response) => {
+
+        let userToken = response.data.data.token
+        window.localStorage.setItem('user', userToken)
+
+        router.push('/')
+
+      })
+      .catch((error) => {
+
+        console.log(error);
+
+        setMessag([...message, "Tasqilash code xato"])
+        setButtonIsLoad(false)
+      })
+  }
+
+  const RessetdSMS = () => {
+    RessetConfirm(username)
+      .then(() => {
+        setMessag([...message, "Tasdiqlash code qayta yuborildi"])
+        SetSmsTimer(120000)
+        setRunTimer(true)
+      })
+      .catch((error) => {
+        let responseMessage = error.response.data.message
+        let timeDelete = error.response.data.time * 100
+
+        console.log(error.response);
+        console.log(message);
+
+        setMessag([...message, responseMessage])
+        setRunTimer(true)
+        SetSmsTimer(timeDelete)
+      })
+  }
+
+  const errorRemover = (e) => {
+    e.target.style = ""
   }
 
   useEffect(() => {
     setTimeout(() => {
-      smsTimer != 0 ?
-        SetSmsTimer(smsTimer - 1) : null
+      if (runTimer) {
+        if (smsTimer >= 0) {
+          let minute = Math.floor(smsTimer / (60 * 1000));
+          setMinute(minute)
+
+          secunde == 0 ? (
+            setSecunde(60)
+          ) : setSecunde(secunde - 1)
+
+          SetSmsTimer(smsTimer - 1000)
+        } else {
+          setRunTimer(false)
+        }
+      }
     }, 1000)
   })
 
@@ -170,7 +325,7 @@ const SignUp: React.FC = () => {
                     Tasdiqlash
                   </h2>
 
-                  <form onSubmit={(e) => SMSverifay(e)}>
+                  <form onSubmit={(e) => HandleVerify(e)}>
                     <div className="mb-4">
                       <label className="mb-2.5 block font-medium text-black dark:text-white">
                         <p className="mb-9 mt-4">
@@ -179,27 +334,32 @@ const SignUp: React.FC = () => {
                       </label>
                       <div className="relative">
                         <input
+                          ref={codeRef}
                           type="text"
-                          min={0}
-                          max={999999}
                           placeholder="123456"
+                          onChange={e => { setCode(Number(e.target.value)), errorRemover(e) }}
                           className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                         />
                       </div>
                     </div>
 
                     <div className="mb-5">
-                      <input
+                      <button
                         type="submit"
-                        value="Tasdiqlash"
-                        className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
-                      />
+                        className="flex justify-center items-center w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
+                      >
+                        {
+                          buttonIsLoad ? <ButtonLoader /> : null
+                        }
+                        Tasdiqlash
+                      </button>
                     </div>
 
-                    <button className="flex w-full items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50">
+                    <button disabled={runTimer} style={runTimer ? { opacity: 0.6 } : {}} type="button" onClick={RessetdSMS} className="flex w-full items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 dark:border-strokedark dark:bg-meta-4">
                       {
-                        smsTimer != 0 ?
-                          <span className="flex justify-center items-center w-[30px] h-[30px] rounded-full bg-primary">{smsTimer}</span> : null
+                        runTimer ? (
+                          <span className="flex justify-center items-center w-[50px] h-[30px] rounded-sm bg-primary">{minute}:{secunde}</span>
+                        ) : null
                       }
                       codeni qayta yuborish
                     </button>
@@ -223,15 +383,17 @@ const SignUp: React.FC = () => {
                     Ro'yxatdan o'tish
                   </h2>
 
-                  <form onSubmit={(e) => SMSverifay(e)}>
+                  <form onSubmit={(e) => HandleRegister(e)}>
                     <div className="mb-4">
                       <label className="mb-2.5 block font-medium text-black dark:text-white">
                         Email yoki telfon raqami kiriting
                       </label>
                       <div className="relative">
                         <input
+                          onChange={e => { setUsername(e.target.value), errorRemover(e) }}
+                          ref={usernameRef}
                           type="text"
-                          placeholder="901234567"
+                          placeholder="myemail@gmail.com"
                           className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                         />
                       </div>
@@ -243,6 +405,8 @@ const SignUp: React.FC = () => {
                       </label>
                       <div className="relative">
                         <input
+                          ref={password1Ref}
+                          onChange={e => { setPassword1(e.target.value), errorRemover(e) }}
                           type="password"
                           placeholder="***********"
                           className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
@@ -278,6 +442,8 @@ const SignUp: React.FC = () => {
                       </label>
                       <div className="relative">
                         <input
+                          ref={password2Ref}
+                          onChange={e => { setPassword2(e.target.value), errorRemover(e) }}
                           type="password"
                           placeholder="***********"
                           className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
@@ -308,11 +474,17 @@ const SignUp: React.FC = () => {
                     </div>
 
                     <div className="mb-5">
-                      <input
+                      <button
                         type="submit"
-                        value="Ro'yxatdan o'tish"
-                        className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
-                      />
+                        className="flex justify-center items-center gap-2 w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
+                      >
+                        {
+                          buttonIsLoad ? <ButtonLoader /> : null
+                        }
+                        <span>
+                          Ro'yxatdan o'tish
+                        </span>
+                      </button>
                     </div>
 
                     <button className="flex w-full items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50">
@@ -366,7 +538,16 @@ const SignUp: React.FC = () => {
               </div>
             )
           }
-
+        </div>
+        <div className="fixed left-[-350px] bottom-0 top-auto flex flex-col gap-3 p-3">
+          {
+            message.map((item, index) => (
+              <div key={index} className="message-box relative p-3 bg-stroke rounded-md text-black-2 w-[300px] overflow-hidden">
+                {item}
+                <span className="absolute bottom-0 left-0 w-full h-[4px] bg-primary"></span>
+              </div>
+            ))
+          }
         </div>
       </div>
     </>
