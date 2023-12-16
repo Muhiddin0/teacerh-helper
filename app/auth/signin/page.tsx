@@ -1,7 +1,7 @@
 'use client'
 
 // React &  Next
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Metadata } from "next";
@@ -9,8 +9,12 @@ import { Metadata } from "next";
 // components
 import { ButtonLoader } from "@/components/button-loader";
 
+import { useSelector, useDispatch } from 'react-redux'
+
 // services API
 import { Login } from '@/services'
+
+import { RootState } from '@/redux/store'
 
 // interfcae
 export const metadata: Metadata = {
@@ -20,6 +24,10 @@ export const metadata: Metadata = {
 
 
 const SignIn: React.FC = () => {
+
+
+  const messages = useSelector((state: RootState) => state.messages)
+  const dispatch = useDispatch()
 
   // navifate
   const router = useRouter()
@@ -32,6 +40,7 @@ const SignIn: React.FC = () => {
   const [username, setUsername] = useState<string>("")
   const [password, setPassword] = useState<string>("")
   const [requestProcced, setRequestProcced] = useState<boolean>(false)
+  const [message, setMessage] = useState<string[]>([])
 
   // form validator
   const formValid = (username: string, password: string) => {
@@ -59,25 +68,26 @@ const SignIn: React.FC = () => {
     const formIsValid = formValid(username, password)
     if (!formIsValid) return
 
-    setRequestProcced(true)
     // set Loading button
-
+    setRequestProcced(true)
 
     // send Form
-    let LoginSend = await Login(username, password)
-    let loginStatus = LoginSend.data
+    try {
+      let LoginSend = await Login(username, password)
+      let loginStatus = LoginSend.data
 
-    // unset loadin button
-    setRequestProcced(false)
+      // check request status
+      if (!loginStatus) return
 
-    // check request status
-    if (!loginStatus) return
-
-    // set and redirce succes user
-    let token = LoginSend.data['data']['token']
-    window.localStorage.setItem('user', token)
-    router.push('/')
-
+      // set and redirce succes user
+      let token = LoginSend.data['data']['token']
+      window.localStorage.setItem('user', token)
+      router.push('/')
+    }
+    catch {
+      setMessage([...message, "Foydalanuvchi nomi yoki parol xato"])
+      setRequestProcced(false)
+    }
   }
 
   return (
@@ -347,6 +357,16 @@ const SignIn: React.FC = () => {
                 </div>
               </form>
             </div>
+          </div>
+          <div className="fixed left-[-310px] bottom-0 top-auto flex flex-col gap-3 p-3">
+            {
+              message.map((item, index) => (
+                <div key={index} className="message-box relative p-3 bg-stroke rounded-md text-black-2 w-[300px] overflow-hidden">
+                  {item}
+                  <span className="absolute bottom-0 left-0 w-full h-[4px] bg-primary"></span>
+                </div>
+              ))
+            }
           </div>
         </div>
       </div>

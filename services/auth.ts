@@ -3,8 +3,8 @@ import axios from "axios";
 
 export const Login = async (username: string, password: string): any => {
   let data = JSON.stringify({
-    username: "admin@gmail.com",
-    password: "Samandar001@",
+    username: username,
+    password: password,
   });
 
   let config = {
@@ -24,7 +24,6 @@ export const Login = async (username: string, password: string): any => {
 };
 
 export const GetMe = (tokken: string) => {
-  const axios = require("axios");
   const FormData = require("form-data");
   const data = new FormData();
 

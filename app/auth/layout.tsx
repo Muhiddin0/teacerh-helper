@@ -1,4 +1,5 @@
 "use client";
+
 import "../globals.css"
 import "../custom.css"
 import "../data-tables-css.css";
@@ -7,15 +8,18 @@ import { useState, useEffect } from "react";
 import Loader from "@/components/common/Loader";
 import { useRouter } from "next/navigation";
 
+import { Provider } from 'react-redux'
+import { store } from "@/redux/store";
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
 
+
   const router = useRouter()
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -30,25 +34,27 @@ export default function RootLayout({
   // }, []);
 
   return (
-    <html lang="en">
-      <body suppressHydrationWarning={true}>
-        <div className="dark:bg-boxdark-2 dark:text-bodydark overflow-auto">
-          {loading ? (
-            <Loader />
-          ) : (
-            <div className="h-screen overflow-auto">
+    <Provider store={store}>
+      <html lang="en">
+        <body suppressHydrationWarning={true}>
+          <div className="dark:bg-boxdark-2 dark:text-bodydark overflow-auto">
+            {loading ? (
+              <Loader />
+            ) : (
+              <div className="h-screen overflow-auto">
 
-              {/* <!-- ===== Main Content Start ===== --> */}
-              <main>
-                <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
-                  {children}
-                </div>
-              </main>
+                {/* <!-- ===== Main Content Start ===== --> */}
+                <main>
+                  <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+                    {children}
+                  </div>
+                </main>
 
-            </div>
-          )}
-        </div>
-      </body>
-    </html>
+              </div>
+            )}
+          </div>
+        </body>
+      </html>
+    </Provider>
   );
 }

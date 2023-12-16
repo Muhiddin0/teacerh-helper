@@ -26,3 +26,36 @@
 .resource-class.moderator:hover .action-box {
   width: 30px;
 }
+
+.message-box {
+  position: relative;
+  animation: messsage-anm 5s cubic-bezier(0.61, 0.14, 0.41, 1.12);
+  /* left: -110%; */
+}
+@keyframes messsage-anm {
+  0% {
+    right: 0;
+  }
+  10% {
+    right: -310px;
+  }
+  90% {
+    right: -310px;
+  }
+  100% {
+    right: 0;
+  }
+}
+
+.message-box span {
+  animation: messag-timer 4.5s linear 1;
+  width: 0%;
+}
+@keyframes messag-timer {
+  0% {
+    width: 100%;
+  }
+  100% {
+    width: 0%;
+  }
+}

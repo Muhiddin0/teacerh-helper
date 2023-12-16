@@ -10,6 +10,7 @@ import Loader from "@/components/common/Loader";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import { useRouter } from "next/navigation";
+import { Classes, Science } from "@/services/bekome-moderator";
 
 export default function RootLayout({
   children,
@@ -28,7 +29,26 @@ export default function RootLayout({
     if (!user)
       router.push('/auth/signin')
 
+
+    // set class
+    const setClass = async () => {
+      let classes = await Classes()
+      let classitems = JSON.stringify(classes.data["data"])
+      window.localStorage.setItem('classes', classitems)
+    }
+    setClass()
+
+    // set scient
+    const setSciense = async () => {
+      let science = await Science()
+      let scienseItems = JSON.stringify(science.data["data"])
+      window.localStorage.setItem('science', scienseItems)
+    }
+    setSciense()
+
   }, [])
+
+
   useEffect(() => {
     setTimeout(() => setLoading(false), 1000);
   }, []);
