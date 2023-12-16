@@ -367,7 +367,7 @@ const SignIn: React.FC = () => {
               </form>
             </div>
           </div>
-          <div className="fixed left-[-310px] bottom-0 top-auto flex flex-col gap-3 p-3">
+          <div className="fixed left-[-350px] bottom-0 top-auto flex flex-col gap-3 p-3">
             {
               message.map((item, index) => (
                 <div key={index} className="message-box relative p-3 bg-stroke rounded-md text-black-2 w-[300px] overflow-hidden">

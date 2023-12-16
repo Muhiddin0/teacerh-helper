@@ -1,5 +1,4 @@
 import { instance } from "./api";
-import FormData from "form-data";
 
 export const Login = async (username: string, password: string): any => {
   let data = JSON.stringify({
@@ -54,25 +53,6 @@ export const Register = async (username: string) => {
   return await instance.request(config);
 };
 
-export const Resset = async (username: string) => {
-  let data = JSON.stringify({
-    username: username,
-  });
-
-  let config = {
-    method: "post",
-    maxBodyLength: Infinity,
-    url: "/api/auth/resend",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    data: data,
-  };
-
-  return await instance.request(config);
-};
-
 export const confirmCode = async (username: string, code: number) => {
   let data = JSON.stringify({
     username: username,
@@ -82,7 +62,7 @@ export const confirmCode = async (username: string, code: number) => {
   let config = {
     method: "post",
     maxBodyLength: Infinity,
-    url: "https://teacher.iprogrammer.uz/api/auth/confirm",
+    url: "/api/auth/confirm",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",

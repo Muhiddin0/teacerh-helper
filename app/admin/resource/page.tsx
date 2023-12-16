@@ -3,14 +3,29 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { HiOutlineEye } from "react-icons/hi";
-import { RiDeleteBin6Line } from "react-icons/ri";
-import { resourceItems } from './resource-items'
+import { GetResource } from "@/services/admin";
+import { useEffect, useState } from "react";
+import { TResource } from "./resource-items.type";
 
 
 const Resource = () => {
 
   const pathname = usePathname()
+
+  const [resourceItems, SetResourceItems] = useState<TResource[]>([])
+
+  useEffect(() => {
+    let userToken: string = String(window.localStorage.getItem('user'))
+    GetResource(userToken)
+      .then((response) => {
+        let data = response.data.data
+        SetResourceItems(data)
+      })
+      .then((error) => {
+        console.log(error);
+      })
+  }, [])
+
 
   return (
     <div>
@@ -28,7 +43,7 @@ const Resource = () => {
                   </div>
                   <div className="">
                     <b>Mavzu: </b>
-                    <Link className="hover:text-primary transition-all underline" href={pathname + "/1"}>{item.topic.topic_name}</Link>
+                    <Link className="hover:text-primary transition-all underline" href={pathname + "/" + item.id}>{item.topic.topic_name}</Link>
                   </div>
                 </div>
               </>

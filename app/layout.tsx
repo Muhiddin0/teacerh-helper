@@ -10,13 +10,18 @@ import Loader from "@/components/common/Loader";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import { Classes, Science } from "@/services/bekome-moderator";
+import { useRouter } from "next/navigation";
+import { GetMe } from "@/services";
+import { store } from "@/redux/store";
+import { Provider } from 'react-redux'
+
+
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -26,6 +31,8 @@ export default function RootLayout({
     setTimeout(() => setLoading(false), 1000);
   }, []);
 
+
+  // set class and scices
   useEffect(() => {
     // set class
     const setClass = async () => {
@@ -33,6 +40,7 @@ export default function RootLayout({
       let classitems = JSON.stringify(classes.data["data"])
       window.localStorage.setItem('classes', classitems)
     }
+
     setClass()
 
     // set scient
@@ -43,43 +51,48 @@ export default function RootLayout({
     }
     setSciense()
   })
+
   return (
-    <html lang="en">
-      <body suppressHydrationWarning={true}>
-        <div className="dark:bg-boxdark-2 dark:text-bodydark">
-          {loading ? (
-            <Loader />
-          ) : (
-            <div className="flex h-screen overflow-hidden">
-              {/* <!-- ===== Sidebar Start ===== --> */}
-              <Sidebar
-                sidebarOpen={sidebarOpen}
-                setSidebarOpen={setSidebarOpen}
-              />
-              {/* <!-- ===== Sidebar End ===== --> */}
+    <>
+      <Provider store={store}>
+        <html lang="en">
+          <body suppressHydrationWarning={true}>
+            <div className="dark:bg-boxdark-2 dark:text-bodydark">
+              {loading ? (
+                <Loader />
+              ) : (
+                <div className="flex h-screen overflow-hidden">
+                  {/* <!-- ===== Sidebar Start ===== --> */}
+                  <Sidebar
+                    sidebarOpen={sidebarOpen}
+                    setSidebarOpen={setSidebarOpen}
+                  />
+                  {/* <!-- ===== Sidebar End ===== --> */}
 
-              {/* <!-- ===== Content Area Start ===== --> */}
-              <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
-                {/* <!-- ===== Header Start ===== --> */}
-                <Header
-                  sidebarOpen={sidebarOpen}
-                  setSidebarOpen={setSidebarOpen}
-                />
-                {/* <!-- ===== Header End ===== --> */}
+                  {/* <!-- ===== Content Area Start ===== --> */}
+                  <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+                    {/* <!-- ===== Header Start ===== --> */}
+                    <Header
+                      sidebarOpen={sidebarOpen}
+                      setSidebarOpen={setSidebarOpen}
+                    />
+                    {/* <!-- ===== Header End ===== --> */}
 
-                {/* <!-- ===== Main Content Start ===== --> */}
-                <main>
-                  <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
-                    {children}
+                    {/* <!-- ===== Main Content Start ===== --> */}
+                    <main>
+                      <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+                        {children}
+                      </div>
+                    </main>
+                    {/* <!-- ===== Main Content End ===== --> */}
                   </div>
-                </main>
-                {/* <!-- ===== Main Content End ===== --> */}
-              </div>
-              {/* <!-- ===== Content Area End ===== --> */}
+                  {/* <!-- ===== Content Area End ===== --> */}
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </body>
-    </html>
+          </body>
+        </html>
+      </Provider>
+    </>
   );
 }

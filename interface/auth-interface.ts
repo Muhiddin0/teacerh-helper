@@ -4,22 +4,28 @@ export interface ILogin {
 }
 
 export interface IAuthState {
-  first_name: string;
-  last_name: string;
-  birth_day: null | string;
-  gender: string;
-  phone?: string;
-  email?: string;
-  address: {
-    region: string;
-    city: string;
-    school: string;
-  };
-  class: null | string;
-  edu_system: null | string;
-  science: null | string;
-  role: {
-    id: number;
-    name: string;
+  data: {
+    first_name: string | null;
+    last_name: string | null;
+    birth_day: null | string;
+    gender: string | null;
+    phone: string | null;
+    email: string | null;
+    address: {
+      region: string;
+      city: string;
+      school: string;
+    } | null;
+    class: null | string;
+    edu_system: null | string;
+    science: {
+      id: number;
+      science_name: string;
+      science_group: string;
+    };
+    role: {
+      id: number;
+      name: string;
+    };
   };
 }

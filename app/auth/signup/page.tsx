@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 // assets
 import Logo from '../../assets/icons/logo.svg'
 import { ButtonLoader } from "@/components/button-loader";
-import { Register, Resset, RessetConfirm, confirmCode } from "@/services/auth";
+import { Register, RessetConfirm, confirmCode } from "@/services/auth";
 import { useRouter } from "next/navigation";
 
 const SignUp: React.FC = () => {
@@ -20,7 +20,7 @@ const SignUp: React.FC = () => {
   const router = useRouter()
 
   // ref
-  const usernameRef = createRef<HTMLInputElement>(null)
+  const usernameRef = createRef<HTMLInputElement>(0)
   const password1Ref = createRef<HTMLInputElement>(0)
   const password2Ref = createRef<HTMLInputElement>(0)
   const codeRef = createRef<HTMLInputElement>()
@@ -63,9 +63,6 @@ const SignUp: React.FC = () => {
     return formIsValid
   }
 
-  // const Resset = () => {
-  //   Resset()
-  // }
   const HandleRegister = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
@@ -127,12 +124,9 @@ const SignUp: React.FC = () => {
 
     confirmCode(username, code)
       .then((response) => {
-
         let userToken = response.data.data.token
         window.localStorage.setItem('user', userToken)
-
         router.push('/')
-
       })
       .catch((error) => {
 

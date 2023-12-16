@@ -7,15 +7,28 @@ import { IoSendSharp } from "react-icons/io5";
 
 // axios
 import { RequestModerator, Classes } from "@/services/bekome-moderator";
-import { Topic } from "@/services/bekome-moderator/request-moderator";
+
+// redux
+import { useSelector, useDispatch } from 'react-redux'
+import { RootState } from '@/redux/store'
+import { addMessage } from '@/redux/features/messageSlice'
+// import { IAuthState } from "@/interface/auth-interface";
 
 const BekomeModerator = () => {
+
+  const messages = useSelector((state: RootState) => state.messages)
+  const dispatch = useDispatch()
+
+  // // test
+  // useEffect(() => {
+  //   dispatch(addMessage("salom"))
+  //   console.log(messages);
+  // })
 
   const [requestIsProcced, setRequestIsProcced] = useState<boolean>(false)
 
   // states
   const [jshshir, setJshshir] = useState<string>('')
-  const [selectedClass, setSelectedClass] = useState<string>('')
   const [selectedScience_id, setScience_id] = useState<string>('')
   const [authToken, setAuthToken] = useState<string>('')
 
@@ -35,42 +48,28 @@ const BekomeModerator = () => {
 
   useState(() => {
 
-    let token = window.localStorage.getItem("user")
+    let token: string = window.localStorage.getItem("user")
     setAuthToken(token)
 
     // get items
-    let classesitems = JSON.parse(window.localStorage.getItem("classes"))
     let scienceitems = JSON.parse(window.localStorage.getItem("science"))
 
     // set items
-    setClassItems(classesitems)
     setScienseItems(scienceitems)
   })
 
   // ref
   const jshshirRef = createRef<HTMLInputElement>(0)
-  const classRef = createRef<HTMLOptionElement>(0)
   const scienceRef = createRef<HTMLOptionElement>(0)
 
   // erro remove
   const formErrorRemover = (e: React.ChangeEvent<HTMLInputElement>) => e.target.style = ""
 
-
   const formValidator = () => {
     let formIsValid = true
 
-    console.log(jshshir);
-    console.log(selectedClass);
-    console.log(selectedScience_id);
-
-
     if (jshshir.length < 14) {
       jshshirRef.current.style.border = '1px solid red'
-      formIsValid = false
-    }
-
-    if (!selectedClass) {
-      classRef.current.style.border = '1px solid red'
       formIsValid = false
     }
 
@@ -88,16 +87,17 @@ const BekomeModerator = () => {
     let formIsValid = formValidator()
     if (!formIsValid) return
 
-    // let requestScienceId = await Topic(selectedClass, selectedScience_id)
-    // console.log(requestScienceId);
-    let science_id = "3"
+    RequestModerator(selectedScience_id, jshshir, authToken)
+      .then((response) => {
+        console.log(response);
+        let responseMessage = response.data.message
+        dispatch(addMessage(responseMessage))
+      })
+      .catch((error) => {
 
-    console.log(authToken);
-
-    let requestModerator = RequestModerator(science_id, jshshir, authToken)
-
-    console.log(requestModerator);
-
+        let responseMessage = error.response.data.message
+        dispatch(addMessage(responseMessage))
+      })
   }
   return (
     <>
@@ -130,14 +130,6 @@ const BekomeModerator = () => {
 
         {/* science  AND Cass*/}
         <div className='flex justify-around items-center gap-6 py-4 px-6.5'>
-          <select onChange={(e) => { setSelectedClass(e.target.value), formErrorRemover(e) }} ref={classRef} id="small" className="block bg-gray-2 dark:bg-form-strokedark px-5 w-full p-2 mb-6 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-            <option selected>Sinfni tanlang</option>
-            {
-              classItems.map((item, index) => (
-                <option onClick={e => console.log(e)} key={index} value={item.id}>{item.class_name}</option>
-              ))
-            }
-          </select>
           <select onChange={(e) => { setScience_id(e.target.value), formErrorRemover(e) }} ref={scienceRef} id="small" className="block bg-gray-2 dark:bg-form-strokedark px-5 w-full p-2 mb-6 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
             <option selected>Fanni nalang</option>
             {
@@ -167,6 +159,17 @@ const BekomeModerator = () => {
         </div>
       </div>
 
+      {/* messages */}
+      <div className="fixed z-[1000000] left-[-350px] bottom-0 top-auto flex flex-col gap-3 p-3">
+        {
+          messages.map((item, index) => (
+            <div key={index} className="message-box relative p-3 bg-stroke rounded-md text-black-2 w-[300px] overflow-hidden">
+              {item}
+              <span className="absolute bottom-0 left-0 w-full h-[4px] bg-primary"></span>
+            </div>
+          ))
+        }
+      </div>
     </>
   );
 }

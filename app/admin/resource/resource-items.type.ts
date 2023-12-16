@@ -18,7 +18,7 @@ export type TResource = {
       last_name: string;
       email: string;
     };
-    science?: string;
+    science: string | null;
     level: number;
   };
   media: string[];

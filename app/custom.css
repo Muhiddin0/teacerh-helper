@@ -1,3 +1,7 @@
+:root {
+  --transparent: #0000009e;
+}
+
 .resouce-title:hover span {
   width: 100%;
 }
@@ -58,4 +62,14 @@
   100% {
     width: 0%;
   }
+}
+
+.delete-modal {
+  z-index: -100;
+  opacity: 0;
+  transition: 0.3s;
+}
+.delete-modal.active {
+  z-index: 10000;
+  opacity: 1;
 }
