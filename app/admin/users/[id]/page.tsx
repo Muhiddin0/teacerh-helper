@@ -1,44 +1,67 @@
 "use client"
 
+import { getUserList } from "@/services/admin";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 // icons
 import { MdOutlineEdit } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
 
-const User = () => {
+// types
+import { users } from '../types'
+
+const User = (props) => {
 
   const pathname = usePathname()
+
+  const [user, setUser] = useState<users>()
+
+  useEffect(() => {
+
+    let authToken = String(window.localStorage.getItem('user'))
+
+    let { id } = props.params
+
+    getUserList(id, authToken)
+      .then((response) => {
+        let { data } = response.data
+        setUser(data)
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }, [])
 
   return (
     <div>
 
-      <h1 className="text-3xl">Samandar</h1>
+      <h1 className="text-3xl">{user?.first_name}</h1>
 
       <ul className="mt-4">
         <li className="flex gap-1">
           <b>Ismi:</b>
-          <span>Samandar</span>
+          <span>{user?.first_name}</span>
         </li>
         <li className="flex gap-1">
           <b>Familyasi:</b>
-          <span>Samandar</span>
+          <span>{user?.last_name}</span>
         </li>
         <li className="flex gap-1">
           <b>Contacts:</b>
           <div className="flex gap-2">
-            <span>+998905650213, </span>
-            <span>admin@gmail.com</span>
+            <span>{user?.phone}</span>
+            <span>{user?.email}</span>
           </div>
         </li>
         <li className="flex gap-1">
           <b>Role:</b>
-          <span>Admin</span>
+          <span>{user?.role}</span>
         </li>
         <li className="flex gap-1">
           <b>Holati:</b>
-          <span>active</span>
+          <span>{user?.status}</span>
         </li>
       </ul>
 

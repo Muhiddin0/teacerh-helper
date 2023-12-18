@@ -8,20 +8,44 @@ import { useState, useEffect } from "react";
 import Loader from "@/components/common/Loader";
 
 import Sidebar from "./Sidebar";
-import Header from "@/components/Header";
+import Header from "./Header";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { GetMe } from "@/services";
+import { useRouter } from "next/navigation";
+import { IAuthState } from "@/interface/auth-interface";
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const message = useSelector((state: RootState) => state.messages)
+  const route = useRouter()
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 1000);
   }, []);
+
+  useEffect(() => {
+    let userToken = window.localStorage.getItem('user')
+    if (!userToken) route.push('/auth/signup')
+
+    GetMe(userToken)
+      .then((response) => {
+
+        let role = response.data.data.role.name
+
+        if (role == "admin")
+          route.push('/admin')
+        else if (role == "teacher")
+          route.push('/')
+      })
+  }, [])
 
   return (
     <html lang="en">
@@ -58,6 +82,16 @@ export default function RootLayout({
               {/* <!-- ===== Content Area End ===== --> */}
             </div>
           )}
+        </div>
+        <div className="fixed z-[1000000] left-[-350px] bottom-0 top-auto flex flex-col gap-3 p-3">
+          {
+            message.map((item, index) => (
+              <div key={index} className="message-box relative p-3 bg-stroke rounded-md text-black-2 w-[300px] overflow-hidden">
+                {item}
+                <span className="absolute bottom-0 left-0 w-full h-[4px] bg-primary"></span>
+              </div>
+            ))
+          }
         </div>
       </body>
     </html>

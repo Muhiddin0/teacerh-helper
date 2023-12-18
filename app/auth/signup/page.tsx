@@ -14,6 +14,7 @@ import Logo from '../../assets/icons/logo.svg'
 import { ButtonLoader } from "@/components/button-loader";
 import { Register, RessetConfirm, confirmCode } from "@/services/auth";
 import { useRouter } from "next/navigation";
+import { Science } from "@/services/bekome-moderator";
 
 const SignUp: React.FC = () => {
 
@@ -21,14 +22,12 @@ const SignUp: React.FC = () => {
 
   // ref
   const usernameRef = createRef<HTMLInputElement>(0)
-  const password1Ref = createRef<HTMLInputElement>(0)
-  const password2Ref = createRef<HTMLInputElement>(0)
+  const selectRef = createRef<HTMLSelectElement>(0)
   const codeRef = createRef<HTMLInputElement>()
 
   // states
   const [username, setUsername] = useState<string>("")
-  const [password1, setPassword1] = useState<string>("")
-  const [password2, setPassword2] = useState<string>("")
+
   const [code, setCode] = useState<number>(0)
   const [smsTimer, SetSmsTimer] = useState<number>(1200)
   const [runTimer, setRunTimer] = useState<boolean>(false)
@@ -39,6 +38,32 @@ const SignUp: React.FC = () => {
   const [minute, setMinute] = useState<number>(2)
   const [secunde, setSecunde] = useState<number>(60)
 
+  const [science, setScience] = useState<TScince[]>([])
+
+  type TScince = {
+    "id": number,
+    "science_name": string,
+    "science_group": string
+  }
+
+  // set Class
+  useEffect(() => {
+    Science()
+      .then((response) => {
+        console.log(response);
+        let data = response.data.data
+
+        console.log(data);
+
+        setScience(data)
+        console.log(science);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+
+  }, [])
+
   const formIsValid = () => {
     let formIsValid = true
 
@@ -46,20 +71,11 @@ const SignUp: React.FC = () => {
       usernameRef.current.style.border = "1px solid red"
       formIsValid = false
     }
-    if (password1 < 8) {
-      password1Ref.current.style.border = "1px solid red"
-      formIsValid = false
-    }
-    if (password2 < 8) {
-      password2Ref.current.style.border = "1px solid red"
-      formIsValid = false
-    }
-    if (password1 != password2) {
-      password1Ref.current.style.border = "1px solid red"
-      password2Ref.current.style.border = "1px solid red"
-      formIsValid = false
-    }
 
+    if (selectRef.current?.value == "Fani tanlang") {
+      selectRef.current.style.border = "1px solid red"
+      formIsValid = false
+    }
     return formIsValid
   }
 
@@ -70,14 +86,9 @@ const SignUp: React.FC = () => {
     setButtonIsLoad(true)
 
     let username = usernameRef.current.value
+    let science_id = selectRef.current?.value
 
-    console.log(username);
-
-    function isOnlyDigits(text: string) {
-      return /^\d+$/.test(text);
-    }
-
-    Register(username)
+    Register(username, science_id)
       .then(response => {
         console.log(response);
         setSmsVerifayStep(true)
@@ -393,7 +404,19 @@ const SignUp: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="mb-4">
+                    <div className="w-full my-4">
+                      <label htmlFor="countries" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select an option</label>
+                      <select onChange={e => errorRemover(e)} ref={selectRef} id="countries" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option selected>Fani tanlang</option>
+                        {
+                          science.map((item, index) => (
+                            <option key={index} value={item.id}>{item.science_name}</option>
+                          ))
+                        }
+                      </select>
+                    </div>
+
+                    {/* <div className="mb-4">
                       <label className="mb-2.5 block font-medium text-black dark:text-white">
                         Parol kiriting
                       </label>
@@ -465,7 +488,7 @@ const SignUp: React.FC = () => {
                           </svg>
                         </span>
                       </div>
-                    </div>
+                    </div> */}
 
                     <div className="mb-5">
                       <button
@@ -532,7 +555,7 @@ const SignUp: React.FC = () => {
               </div>
             )
           }
-        </div>
+        </div >
         <div className="fixed left-[-350px] bottom-0 top-auto flex flex-col gap-3 p-3">
           {
             message.map((item, index) => (
@@ -543,7 +566,7 @@ const SignUp: React.FC = () => {
             ))
           }
         </div>
-      </div>
+      </div >
     </>
   );
 };

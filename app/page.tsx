@@ -6,8 +6,7 @@ import { GetMe } from "@/services";
 import { Classes, Science } from "@/services/bekome-moderator";
 import { Metadata } from "next";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-
+import { useEffect, useState } from "react";
 
 // redux
 import { useSelector, useDispatch } from 'react-redux'
@@ -26,6 +25,10 @@ export default function Home() {
   const user = useSelector((state: RootState) => state.user)
   const dispatch = useDispatch()
 
+  useState(() => {
+    console.log('salom');
+  })
+
   const router = useRouter()
 
   useEffect(() => {
@@ -34,11 +37,15 @@ export default function Home() {
 
     GetMe(userToken)
       .then((response) => {
-        let responsedata: IAuthState = response.data.data
+        let { data }: IAuthState = response.data
 
-        console.log(responsedata);
-        dispatch(addPerson(responsedata))
-        console.log(user);
+        let role = data.role.name
+
+        if (role == "moderator")
+          router.push('/moderator')
+        else if (role == "admin")
+          router.push('/admin')
+        dispatch(addPerson(response.data))
       })
   }, [])
 

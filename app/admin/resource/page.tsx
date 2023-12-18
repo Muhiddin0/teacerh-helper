@@ -19,6 +19,8 @@ const Resource = () => {
     GetResource(userToken)
       .then((response) => {
         let data = response.data.data
+        console.log(data);
+
         SetResourceItems(data)
       })
       .then((error) => {
@@ -30,25 +32,109 @@ const Resource = () => {
   return (
     <div>
       <div className="flex flex-col gap-6">
-        <div className="grid grid-cols-2 grid-rows-1 gap-8">
+        <div className="grid grid-cols-1 grid-rows-1 gap-8">
+
           {
             resourceItems.map((item, index) => (
               <>
-                <div
-                  className="flex bg-stroke dark:bg-graydark flex-col gap-1 p-4 rounded-md shadow-3">
-                  <h1 className="text-2xl" style={{ fontFamily: "cursive" }}>Test resource</h1>
-                  <div>
-                    <b className="text-md">Teacher: </b>
-                    <span>{item.moderator.user.first_name}</span>
+                <table className="table-auto">
+                  <thead>
+                    <tr>
+                      <th>Resource nomi</th>
+                      <th>Mavzu nomi</th>
+                      <th>O'rni</th>
+                      <th>yaratuvchisi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {
+                      resourceItems.map((item, index) => (
+                        <tr key={index}>
+                          <td>{item.resource_name}</td>
+                          <td className="w-[400px]">{item.topic.topic_name}</td>
+                          <td>
+                            <span className="block">
+                              {item.topic.add.class}
+                            </span>
+                            <span className="block">
+                              {item.topic.add.quarter}
+                            </span>
+                            <span className="block">
+                              {item.topic.add.science}
+                            </span>
+                          </td>
+                          <td className="">
+                            <span className="block">
+                              {item.moderator.user.first_name}
+                              {" "}
+                              {item.moderator.user.last_name}
+                            </span>
+                            <span className="block">
+                              {item.moderator.user?.email}
+                              {item.moderator.user?.phone}
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    }
+                  </tbody>
+                </table>
+              </>
+            ))
+          }
+
+
+          {/* {
+            resourceItems.map((item, index) => (
+              <>
+
+                <div className="">
+                  <h1 className="text-3xl">Test Resource</h1>
+
+                  <div className="gap-1 mt-4">
+                    <h1 className="inline text-xl font-bold">Mavzu: </h1>
+                    <p className='inline'>{item?.topic.topic_name}</p>
                   </div>
-                  <div className="">
-                    <b>Mavzu: </b>
-                    <Link className="hover:text-primary transition-all underline" href={pathname + "/" + item.id}>{item.topic.topic_name}</Link>
+
+                  <div className="mt-4">
+                    <b className="text-xl">Resource</b>
+                    <ul className="pl-4">
+                      <li className="flex gap-1">
+                        <b>Sinf:</b>
+                        <p>{item.topic.add.class}</p>
+                      </li>
+                      <li className="flex gap-1">
+                        <b>Chorak:</b>
+                        <p>{item.topic.add.quarter}</p>
+                      </li>
+                      <li className="flex gap-1">
+                        <b>Fan:</b>
+                        <p>{item.topic.add.science}</p>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="mt-4">
+                    <b className="text-xl">User</b>
+                    <ul className="pl-4">
+                      <li className="flex gap-1">
+                        <b>Ismi:</b>
+                        <p>{item.moderator.user.first_name}</p>
+                      </li>
+                      <li className="flex gap-1">
+                        <b>Familyasi:</b>
+                        <p>{item.moderator.user.last_name}</p>
+                      </li>
+                      <li className="flex gap-1">
+                        <b>Email:</b>
+                        <p>{item.moderator.user.email}</p>
+                      </li>
+                    </ul>
                   </div>
                 </div>
               </>
             ))
-          }
+          } */}
         </div>
       </div>
     </div>

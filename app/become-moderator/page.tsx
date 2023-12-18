@@ -12,55 +12,42 @@ import { RequestModerator, Classes } from "@/services/bekome-moderator";
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '@/redux/store'
 import { addMessage } from '@/redux/features/messageSlice'
+import { GetMe } from "@/services";
 // import { IAuthState } from "@/interface/auth-interface";
 
 const BekomeModerator = () => {
 
   const messages = useSelector((state: RootState) => state.messages)
+  const user = useSelector((state: RootState) => state.user)
   const dispatch = useDispatch()
-
-  // // test
-  // useEffect(() => {
-  //   dispatch(addMessage("salom"))
-  //   console.log(messages);
-  // })
 
   const [requestIsProcced, setRequestIsProcced] = useState<boolean>(false)
 
+  // user sciences
+  type TUserScience = {
+    "id": number,
+    "science_name": string,
+    "science_group": string
+  }
+
   // states
   const [jshshir, setJshshir] = useState<string>('')
-  const [selectedScience_id, setScience_id] = useState<string>('')
+  const [userScience, setUserScience] = useState<TUserScience>()
   const [authToken, setAuthToken] = useState<string>('')
-
-  type TClassItems = {
-    id: number
-    class_name: string,
-  }[]
-
-  type TScienseItems = {
-    id: number
-    science_name: string,
-    science_group: string,
-  }[]
-
-  const [classItems, setClassItems] = useState<TClassItems>([])
-  const [scienseItems, setScienseItems] = useState<TScienseItems>([])
 
   useState(() => {
 
-    let token: string = window.localStorage.getItem("user")
-    setAuthToken(token)
+    let authToken = String(window.localStorage.getItem('user'))
+    setAuthToken(authToken)
 
-    // get items
-    let scienceitems = JSON.parse(window.localStorage.getItem("science"))
-
-    // set items
-    setScienseItems(scienceitems)
+    GetMe(authToken).then((response) => {
+      let { science } = response.data.data
+      setUserScience(science)
+    })
   })
 
   // ref
   const jshshirRef = createRef<HTMLInputElement>(0)
-  const scienceRef = createRef<HTMLOptionElement>(0)
 
   // erro remove
   const formErrorRemover = (e: React.ChangeEvent<HTMLInputElement>) => e.target.style = ""
@@ -72,12 +59,6 @@ const BekomeModerator = () => {
       jshshirRef.current.style.border = '1px solid red'
       formIsValid = false
     }
-
-    if (!selectedScience_id) {
-      scienceRef.current.style.border = '1px solid red'
-      formIsValid = false
-    }
-
     return formIsValid
   }
 
@@ -87,14 +68,13 @@ const BekomeModerator = () => {
     let formIsValid = formValidator()
     if (!formIsValid) return
 
-    RequestModerator(selectedScience_id, jshshir, authToken)
+    RequestModerator(userScience?.id, jshshir, authToken)
       .then((response) => {
         console.log(response);
         let responseMessage = response.data.message
         dispatch(addMessage(responseMessage))
       })
       .catch((error) => {
-
         let responseMessage = error.response.data.message
         dispatch(addMessage(responseMessage))
       })
@@ -128,8 +108,20 @@ const BekomeModerator = () => {
           </div>
         </div>
 
+        <div className="py-4 px-6.5">
+          <ul>
+            <li>
+              <b>Fan nomi: </b>
+              <span>{userScience?.science_name}</span>
+            </li>
+            <li>
+              <b>Fan turi: </b>
+              <span>{userScience?.science_group}</span>
+            </li>
+          </ul>
+        </div>
         {/* science  AND Cass*/}
-        <div className='flex justify-around items-center gap-6 py-4 px-6.5'>
+        {/* <div className='flex justify-around items-center gap-6 py-4 px-6.5'>
           <select onChange={(e) => { setScience_id(e.target.value), formErrorRemover(e) }} ref={scienceRef} id="small" className="block bg-gray-2 dark:bg-form-strokedark px-5 w-full p-2 mb-6 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
             <option selected>Fanni nalang</option>
             {
@@ -138,7 +130,7 @@ const BekomeModerator = () => {
               ))
             }
           </select>
-        </div>
+        </div> */}
 
         <div className="flex justify-end">
           <div className="p-4 md:p-6 xl:p-9">
@@ -157,10 +149,10 @@ const BekomeModerator = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div >
 
       {/* messages */}
-      <div className="fixed z-[1000000] left-[-350px] bottom-0 top-auto flex flex-col gap-3 p-3">
+      <div className="fixed z-[1000000] left-[-350px] bottom-0 top-auto flex flex-col gap-3 p-3" >
         {
           messages.map((item, index) => (
             <div key={index} className="message-box relative p-3 bg-stroke rounded-md text-black-2 w-[300px] overflow-hidden">

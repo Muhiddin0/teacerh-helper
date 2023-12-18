@@ -73,3 +73,110 @@
   z-index: 10000;
   opacity: 1;
 }
+
+.drop-box {
+  scale: 1;
+  transition: 0.7s;
+  background: #1500ff00;
+}
+.drop-box.on-drop {
+  scale: 1.04;
+  background: #1400ff8f;
+}
+
+.button-load.is-hidden {
+  display: none !important;
+}
+
+/* button loader*/
+.button-loader {
+  display: none;
+}
+.button-chech {
+  display: block;
+}
+
+[set-load="true"] .button-loader {
+  display: block;
+}
+
+[set-load="true"] .button-chech {
+  display: none;
+}
+
+.btn {
+  padding: 7px 14px;
+  border-radius: 10px;
+  transform: 0.3s;
+  text-align: center;
+}
+.btn:hover {
+  opacity: 0.75;
+}
+
+/* utils */
+.my-resource-card img {
+  transition: 0.3s;
+  scale: 1;
+}
+.my-resource-card:hover img {
+  scale: 1.05;
+}
+
+/* resource */
+.resource-departments img {
+  scale: 1;
+  transition: 0.3s ease-in-out;
+}
+.resource-departments:hover img {
+  scale: 1.05;
+}
+
+/* card text hiddener */
+
+.quarter {
+  position: relative;
+  transition: 0.2s;
+}
+.quarter.active {
+  @apply text-primary;
+}
+
+.quarter::before {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  display: block;
+  @apply bg-primary;
+  bottom: -3px;
+  transition: 0.2s;
+}
+
+.quarter:hover::before {
+  width: 100%;
+}
+
+.quarter.active::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  display: block;
+  @apply bg-primary;
+  bottom: -3px;
+}
+
+.quarter:hover {
+  @apply text-primary;
+}
+
+.quarter:hover::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  display: block;
+  @apply bg-primary;
+  bottom: -3px;
+}

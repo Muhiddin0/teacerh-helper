@@ -18,7 +18,7 @@ export const TableThree: React.FC<ITableThree> = ({ items }) => {
   const pathname = usePathname()
 
   return (
-    <div className="px-5 pt-6 pb-2.5 sm:px-7.5 xl:pb-1">
+    <div className="px-5 pt-6 pb-2.5 sm:px-7.5 xl:pb-1 shadow-3 bg-white rounded-md">
       <div className="max-w-full overflow-x-auto">
         <table className="w-full table-auto">
           <thead>

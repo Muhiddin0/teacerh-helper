@@ -14,8 +14,7 @@ import { useRouter } from "next/navigation";
 import { GetMe } from "@/services";
 import { store } from "@/redux/store";
 import { Provider } from 'react-redux'
-
-
+import NextBreadcrumb from "@/components/breadcrup";
 
 export default function RootLayout({
   children,
@@ -25,12 +24,11 @@ export default function RootLayout({
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    setTimeout(() => setLoading(false), 1000);
-  }, []);
-
+  // useEffect(() => {
+  //   setTimeout(() => setLoading(false), 1000);
+  // }, []);
 
   // set class and scices
   useEffect(() => {
@@ -43,14 +41,14 @@ export default function RootLayout({
 
     setClass()
 
-    // set scient
+    // set sciense
     const setSciense = async () => {
       let science = await Science()
       let scienseItems = JSON.stringify(science.data["data"])
       window.localStorage.setItem('science', scienseItems)
     }
     setSciense()
-  })
+  }, [])
 
   return (
     <>
@@ -81,6 +79,7 @@ export default function RootLayout({
                     {/* <!-- ===== Main Content Start ===== --> */}
                     <main>
                       <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+                        <NextBreadcrumb homeElement={'home'} separator={""} />
                         {children}
                       </div>
                     </main>

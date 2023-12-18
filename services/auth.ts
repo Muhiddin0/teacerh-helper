@@ -33,10 +33,10 @@ export const GetMe = async (token: string | null) => {
   return await instance.request(config);
 };
 
-export const Register = async (username: string) => {
+export const Register = async (username: string, science_id: string) => {
   let data = JSON.stringify({
     username: username,
-    science_id: 1,
+    science_id: science_id,
   });
 
   let config = {

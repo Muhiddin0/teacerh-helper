@@ -10,6 +10,9 @@ import Loader from "@/components/common/Loader";
 
 import Sidebar from "./Sidebar";
 import Header from "./Header";
+import { GetMe } from "@/services";
+import { useRouter } from "next/navigation";
+import { IAuthState } from "@/interface/auth-interface";
 
 export default function RootLayout({
   children,
@@ -24,6 +27,27 @@ export default function RootLayout({
     setTimeout(() => setLoading(false), 1000);
   }, []);
 
+
+  const route = useRouter()
+
+  useEffect(() => {
+    let userToken = window.localStorage.getItem('user')
+    if (!userToken) route.push('/auth/signup')
+
+    GetMe(userToken)
+      .then((response) => {
+        let { data }: IAuthState = response.data
+
+        let role = data.role.name
+
+        console.log(role);
+
+        if (role == "moderator")
+          route.push('/moderator')
+        else if (role == "teacher")
+          route.push('/')
+      })
+  })
   return (
     <html lang="en">
       <body suppressHydrationWarning={true}>
