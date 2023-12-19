@@ -6,7 +6,7 @@ interface IRequestModerator {
 }
 
 export const RequestModerator = async (
-  science_id: string,
+  science_id: string | number | undefined,
   jshshir: string,
   authToken: string
 ) => {
