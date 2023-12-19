@@ -216,7 +216,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 } `}
                             >
                               <MdFormatListBulleted />
-                              So'rov yuborganlar
+                              So&#39;rov yuborganlar
                             </Link>
                           </li>
                         </ul>

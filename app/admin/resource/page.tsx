@@ -42,7 +42,7 @@ const Resource = () => {
                     <tr>
                       <th>Resource nomi</th>
                       <th>Mavzu nomi</th>
-                      <th>O'rni</th>
+                      <th>O&#39;rni</th>
                       <th>yaratuvchisi</th>
                     </tr>
                   </thead>

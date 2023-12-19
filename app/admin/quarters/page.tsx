@@ -9,7 +9,7 @@ const Quarter = () => {
         <div className="flex flex-col gap-5.5 p-6.5">
           <div>
             <label className="mb-3 block text-black dark:text-white">
-              Yangi chorak qo'shish
+              Yangi chorak qo&apos;shish
             </label>
 
             <div className="flex gap-3">

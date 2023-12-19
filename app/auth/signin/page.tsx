@@ -17,10 +17,10 @@ import { Login, GetMe } from '@/services'
 import { RootState } from '@/redux/store'
 
 // interfcae
-export const metadata: Metadata = {
-  title: "Signin Page | Next.js E-commerce Dashboard Template",
-  description: "This is Signin page for TailAdmin Next.js",
-};
+// export const metadata: Metadata = {
+//   title: "Signin Page | Next.js E-commerce Dashboard Template",
+//   description: "This is Signin page for TailAdmin Next.js",
+// };
 
 
 const SignIn: React.FC = () => {

@@ -4,10 +4,10 @@ import React, { createRef, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Metadata } from "next";
-export const metadata: Metadata = {
-  title: "Signup Page | Next.js E-commerce Dashboard Template",
-  description: "This is Signup page for TailAdmin Next.js",
-};
+// export const metadata: Metadata = {
+//   title: "Signup Page | Next.js E-commerce Dashboard Template",
+//   description: "This is Signup page for TailAdmin Next.js",
+// };
 
 // assets
 import Logo from '../../assets/icons/logo.svg'
@@ -371,7 +371,7 @@ const SignUp: React.FC = () => {
 
                     <div className="mt-6 text-center">
                       <p>
-                        Hissobingiz bo'lsa unga
+                        Hissobingiz bo&#39;lsa unga
                         <Link href="/auth/signin" className="text-primary">
                           {" "} kirishingiz {" "}
                         </Link>
@@ -385,7 +385,7 @@ const SignUp: React.FC = () => {
               <div className="form-divs w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2">
                 <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
                   <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
-                    Ro'yxatdan o'tish
+                    Ro&#39;yxatdan o&#39;tish
                   </h2>
 
                   <form onSubmit={(e) => HandleRegister(e)}>
@@ -499,7 +499,7 @@ const SignUp: React.FC = () => {
                           buttonIsLoad ? <ButtonLoader /> : null
                         }
                         <span>
-                          Ro'yxatdan o'tish
+                          Ro&#39;yxatdan o&#39;tish
                         </span>
                       </button>
                     </div>
@@ -543,13 +543,12 @@ const SignUp: React.FC = () => {
 
                     <div className="mt-6 text-center">
                       <p>
-                        Hissobingiz bo'lsa unga
+                        Hissobingiz bo&#39;lsa unga
                         <Link href="/auth/signin" className="text-primary">
                           {" "} kirishingiz {" "}
                         </Link>
                         mumkin?{" "}
-                      </p>
-                    </div>
+                      </p>&#39;                    </div>
                   </form>
                 </div>
               </div>

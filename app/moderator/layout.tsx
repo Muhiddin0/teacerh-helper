@@ -5,15 +5,22 @@ import "../satoshi.css";
 import "../custom.css"
 
 import { useState, useEffect } from "react";
-import Loader from "@/components/common/Loader";
+import { useRouter } from "next/navigation";
 
+// store
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { Classes } from "@/services/bekome-moderator";
+import { Science } from "@/services/base";
+import { setClass } from "@/redux/features/classSlice";
+
+// components
+import Loader from "@/components/common/Loader";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+
+// api
 import { GetMe } from "@/services";
-import { useRouter } from "next/navigation";
-import { IAuthState } from "@/interface/auth-interface";
 
 export default function RootLayout({
   children,
@@ -21,7 +28,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
 
+  // router
   const message = useSelector((state: RootState) => state.messages)
+  const classList = useSelector((state: RootState) => state.class)
+  const dispatch = useDispatch()
+
   const route = useRouter()
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -37,18 +48,33 @@ export default function RootLayout({
 
     GetMe(userToken)
       .then((response) => {
-
         let role = response.data.data.role.name
-
         if (role == "admin")
           route.push('/admin')
         else if (role == "teacher")
           route.push('/')
       })
+
+
+    // set class
+    Classes()
+      .then((response) => {
+        console.log('moderator class add test');
+        console.log(classList);
+        console.log(response.data.data);
+      })
+
+    // // set sciense
+    // const setSciense = async () => {
+    //   let science = await Science()
+    //   let scienseItems = JSON.stringify(science.data["data"])
+    //   window.localStorage.setItem('science', scienseItems)
+    // }
+    // setSciense()
   }, [])
 
   return (
-    <html lang="en">
+    <html lang="uz">
       <body suppressHydrationWarning={true}>
         <div className="dark:bg-boxdark-2 dark:text-bodydark">
           {loading ? (

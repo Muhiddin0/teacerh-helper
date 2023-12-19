@@ -14,10 +14,10 @@ import { RootState } from '@/redux/store'
 import { addPerson } from '@/redux/features/authSlice'
 import { IAuthState } from "@/interface/auth-interface";
 
-export const metadata: Metadata = {
-  title: "TailAdmin | Next.js E-commerce Dashboard Template",
-  description: "This is Home Blog page for TailAdmin Next.js",
-};
+// export const metadata: Metadata = {
+//   title: "TailAdmin | Next.js E-commerce Dashboard Template",
+//   description: "This is Home Blog page for TailAdmin Next.js",
+// };
 
 
 export default function Home() {
@@ -45,7 +45,11 @@ export default function Home() {
           router.push('/moderator')
         else if (role == "admin")
           router.push('/admin')
+
+        console.log(data);
+
         dispatch(addPerson(response.data))
+
       })
   }, [])
 

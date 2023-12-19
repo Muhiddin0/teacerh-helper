@@ -180,3 +180,14 @@
   @apply bg-primary;
   bottom: -3px;
 }
+
+.topic-table {
+  display: none;
+}
+.topic-table.active {
+  display: block;
+}
+
+.tab-item.active {
+  @apply text-primary;
+}

@@ -73,7 +73,7 @@ const Users = () => {
                     {item.status}
                   </td>
                   <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                    <Link className="bg-primary text-white py-2 px-3 rounded-md hover:opacity-70 transition-all" href={pathname + "/" + item.id}>Ko'rish</Link>
+                    <Link className="bg-primary text-white py-2 px-3 rounded-md hover:opacity-70 transition-all" href={pathname + "/" + item.id}>Ko&#39;rish</Link>
                   </td>
                 </tr>
               ))

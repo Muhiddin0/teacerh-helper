@@ -1,5 +1,5 @@
 'use client'
-import { createRef, useEffect, useRef, useState } from 'react'
+import React, { createRef, useEffect, useRef, useState } from 'react'
 
 
 // react
@@ -16,10 +16,20 @@ import Dropzone from "react-dropzone";
 import upload from '@/app/assets/images/upload-file.png'
 import Image from 'next/image';
 
+// components
+import { Pagination, Tthemeitems } from './components/theme-list/theme-list.t';
+import { ButtonLoader } from '@/components/button-loader';
+
 // icons
 import { FaRegFileLines } from "react-icons/fa6";
-import { ButtonLoader } from '@/components/button-loader';
 import { AiOutlineCloudUpload } from "react-icons/ai";
+import { CiCircleRemove } from "react-icons/ci";
+import { CiSearch } from "react-icons/ci";
+import { IoIosCloseCircleOutline } from "react-icons/io";
+
+
+// api
+import { Topics, TopicsFilter } from '@/services/base';
 
 
 const ModeratorResoureCreate = () => {
@@ -36,9 +46,24 @@ const ModeratorResoureCreate = () => {
   const [fileContent, setFileContent] = useState<any[]>([]);
   const [resourceName, setResourceName] = useState<string>("")
   const [resourceClass, setResourceClass] = useState<string>("Sinfni tanlang")
+  const [classID, setClassID] = useState<number | string>("")
+  const [classList, setClassList] = useState<[]>([])
+  const [scienceID, setScienceID] = useState<number | string>("")
+  const [topicID, setTopicID] = useState<number | boolean>(false)
+  const [topicName, setTopicName] = useState<string>("")
+
+  const [nowSearching, SetNowSearching] = useState<string>("")
+
+  const [themes, setThemes] = useState<Tthemeitems[]>([])
+  const [searchTheme, setSearchTheme] = useState<Tthemeitems[]>([])
+  const [pagination, setPagination] = useState<Pagination | null>()
+
+  const [searchQ, setSearchQ] = useState<string>("")
+  const [searchStep, setSearchStep] = useState<boolean>(false)
 
   // refs
   const mainWraperRef = createRef<HTMLDivElement>()
+  const searchInputRef = createRef<HTMLInputElement>()
 
   // file instrface
   interface File {
@@ -46,6 +71,15 @@ const ModeratorResoureCreate = () => {
     type: string;
     size: number;
   }
+
+  useEffect(() => {
+
+    console.log(user);
+
+    setClassList(
+      JSON.parse(String(window.localStorage.getItem('classes')))
+    )
+  }, [])
 
   const handleDrop = (acceptedFiles: File[]) => {
     let newFiles = [...fileContent, ...acceptedFiles]
@@ -99,8 +133,10 @@ const ModeratorResoureCreate = () => {
     setButtonIsLoad(true)
 
     dispatch(addMessage("Resurlaringiz yuklanmoqda"));
+
     let topic_id = 1
     let authToken = String(window.localStorage.getItem('user'))
+
     CreateResource(resourceName, topic_id, fileContent, authToken)
       .then((response) => {
         dispatch(addMessage("Resurlaringiz yuklandi"));
@@ -123,6 +159,68 @@ const ModeratorResoureCreate = () => {
     dropBox.style = ''
   }
 
+  function handleSelectClasss(e) {
+    let classID = e.target.value
+    setResourceClass(e.target.value)
+
+    let scienceID = user.data.science.id
+    console.log(classID);
+
+    setClassID(classID)
+    setScienceID(scienceID)
+
+    Topics(classID, scienceID)
+      .then((response) => {
+        let { data } = response.data
+        let { meta } = response.data
+
+        setThemes(data)
+        setPagination(meta)
+        console.log(meta);
+      })
+
+    ErrorRemover(e)
+  }
+
+  function handleTopicSelect(topic_id: number | false, topic_name: string) {
+    setTopicName(topic_name)
+    setTopicID(topic_id)
+  }
+
+  function handeFilter() {
+
+    console.log(searchQ);
+
+    if (!searchQ) return
+    setSearchStep(true)
+
+    let scienceID = user.data.science.id
+
+    TopicsFilter(classID, scienceID, searchQ)
+      .then((response) => {
+        let { data } = response.data
+        setSearchTheme(data)
+      })
+  }
+
+  function closeSearch() {
+    searchInputRef.current.value = ''
+    setSearchQ('')
+    setSearchStep(false)
+  }
+
+  function handlePagination(paginationID: number) {
+    Topics(classID, scienceID, paginationID)
+      .then((response) => {
+        let { data } = response.data
+        let { meta } = response.data
+
+        setThemes(data)
+        setPagination(meta)
+        console.log(pagination);
+      })
+  }
+
   return (
     <div>
       {/* <!-- Input Fields --> */}
@@ -134,22 +232,145 @@ const ModeratorResoureCreate = () => {
         </div>
         <div className="flex flex-col gap-5.5 p-6.5">
 
-          <div className='flex justify-around items-center gap-6'>
-            <select onChange={(e) => { setResourceClass(e.target.value), ErrorRemover(e) }} id="small" className="class-input block bg-gray-2 dark:bg-form-strokedark px-5 w-full p-2 mb-6 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-              <option selected>Sinfni tanlang</option>
-              <option value="US">1-sinf</option>
-              <option value="US">2-sinf</option>
-              <option value="US">3-sinf</option>
-              <option value="US">4-sinf</option>
-              <option value="US">5-sinf</option>
-              <option value="US">6-sinf</option>
-              <option value="US">7-sinf</option>
-              <option value="US">8-sinf</option>
-              <option value="US">8-sinf</option>
-              <option value="US">10-sinf</option>
-              <option value="US">11-sinf</option>
-            </select>
+          {/* fani */}
+          <div>
+            <label className="mb-3 block font-medium text-black dark:text-white">
+              Faningiz
+            </label>
+            <input
+              type="text"
+              placeholder={user.data.science.science_name}
+              disabled
+              className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary dark:disabled:bg-black"
+            />
           </div>
+
+          {/* Sinifi */}
+          <div>
+            <label className="mb-3 block font-medium text-black dark:text-white">
+              Sinifi
+            </label>
+            <div className='flex justify-around items-center gap-6'>
+              <select onChange={(e) => handleSelectClasss(e)} id="small" className="class-input block bg-gray-2 dark:bg-form-strokedark px-5 w-full p-2 mb-6 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <option selected>Sinfni tanlang</option>
+                {
+                  classList.map((item, index) => (
+                    <option key={index} value={item.id}>{item.class_name}</option>
+                  ))
+                }
+              </select>
+            </div>
+          </div>
+
+          {
+            topicID ?
+              <div className='flex justify-between w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary dark:disabled:bg-black'>
+                <label className="block font-medium text-black dark:text-white">
+                  {topicName}
+                </label>
+                <button onClick={e => { handleTopicSelect(false) }} className='text-primary hover:opacity-80'>
+                  <IoIosCloseCircleOutline size={22} />
+                </button>
+              </div>
+              :
+              <div className="topic-table active relative overflow-x-auto sm:rounded-lg my-4">
+                <div className="">
+                  <label htmlFor="table-search" className="sr-only">
+                    Search
+                  </label>
+                  <div className="relative flex gap-2 px-2 py-1 rounded-lg border-[1px] border-[#64748b]">
+                    <input disabled={!classID} onChange={(e) => setSearchQ(e.target.value)} ref={searchInputRef} placeholder="Mavzu nomi bo'yicha qidirish" className='flex-grow-[2] border-none outline-none bg-transparent' type="text" />
+                    {
+                      searchStep ?
+                        <button onClick={closeSearch} className='w-[30px] h-[30px]'>
+                          <IoIosCloseCircleOutline size={22} />
+                        </button> :
+                        <button onClick={handeFilter} className='w-[30px] h-[30px]'>
+                          <CiSearch size={22} />
+                        </button>
+                    }
+                  </div>
+                </div>
+
+                {
+                  !searchStep ?
+                    <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                      <tbody>
+                        {
+                          themes.map((item, index) => (
+                            <tr key={index} className="  border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                              <td className="w-4 p-4">
+                                <div className="flex items-center">
+                                  <input
+                                    id={"checkbox-table-search-" + index}
+                                    type="checkbox"
+                                    onChange={() => handleTopicSelect(item.id, item.topic_name)}
+                                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                  />
+                                  <label htmlFor={"checkbox-table-search-" + index} className="sr-only">
+                                    checkbox
+                                  </label>
+                                </div>
+                              </td>
+                              <th
+                                scope="row"
+                                className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+                              >
+                                <label htmlFor={"checkbox-table-search-" + index} className=" cursor-pointer">
+                                  {item.topic_name}
+                                </label>
+                              </th>
+                            </tr>
+                          ))
+                        }
+                      </tbody>
+                    </table> : null
+                }
+                {
+                  searchStep ?
+                    <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                      <tbody>
+                        {
+                          searchTheme.map((item, index) => (
+                            <tr key={index} className="  border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                              <td className="w-4 p-4">
+                                <div className="flex items-center">
+                                  <input
+                                    id={"checkbox-table-search-" + index}
+                                    type="checkbox"
+                                    onChange={() => handleTopicSelect(item.id, item.topic_name)}
+                                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                  />
+                                  <label htmlFor={"checkbox-table-search-" + index} className="sr-only">
+                                    checkbox
+                                  </label>
+                                </div>
+                              </td>
+                              <th
+                                scope="row"
+                                className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+                              >
+                                <label htmlFor={"checkbox-table-search-" + index} className=" cursor-pointer">
+                                  {item.topic_name}
+                                </label>
+                              </th>
+                            </tr>
+                          ))
+                        }
+                      </tbody>
+                    </table> : null
+                }
+                <div className='flex gap-2 w-full my-4'>
+                  {
+                    pagination?.count ?
+                      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].slice(0, pagination.totalPage / 10).map((item, index) => (
+                        <button onClick={() => handlePagination(item)} key={index} className='rounded-md bg-body w-[30px] h-[30px] text-white hover:opacity-80 transition-all'>{item}</button>
+                      ))
+                      : null
+                  }
+                </div>
+              </div>
+          }
 
           {/* resiurce name */}
           <div>
@@ -168,11 +389,17 @@ const ModeratorResoureCreate = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 grid-rows-1 gap-6 mt-3">
             {
               fileContent.map((item, index) => (
-                <div key={index} className='flex items-center gap-4 bg-gray-2 dark:bg-form-strokedark p-4 rounded-md'>
-                  <span className='flex justify-center items-center w-[50px] h-[50px] rounded-full bg-strokedark'>
+                <div key={index} className='relative flex items-center gap-4 bg-gray-2 dark:bg-form-strokedark p-4 rounded-md'>
+                  <button className='absolute top-2 right-2 text-danger hover:opacity-80'>
+                    <CiCircleRemove size={25} />
+                  </button>
+                  <span className='flex justify-center items-center w-[50px] h-[50px] rounded-full bg-primary text-white dark:bg-strokedark'>
                     <FaRegFileLines />
                   </span>
-                  <span className='text-xl flex-grow-[1] overflow-hidden whitespace-nowrap'>{item.name}</span>
+                  <div className='flex flex-col gap-1 '>
+                    <span className='text-xl flex-grow-[1] text-md overflow-hidden whitespace-nowrap'>{item.name}</span>
+                    <span className='text-xs'>10mg</span>
+                  </div>
                 </div>
               ))
             }
@@ -209,14 +436,14 @@ const ModeratorResoureCreate = () => {
                 buttonIsLoad ? <ButtonLoader /> : null
               }
               <span className='ml-2'>
-                Jo'natish
+                Jo&#39;natish
               </span>
             </button>
           </div>
 
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 

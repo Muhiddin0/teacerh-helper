@@ -20,7 +20,7 @@ const Page = () => {
               <b className="text-3xl text-center md:text-start">Algebra</b>
               <p className="text-center md:text-start">6 ta Moderator</p>
             </div>
-            <Link className="btn bg-[#407bff] text-white transition-all" href={pathname + '/5'}>Siniflarni ko'rish</Link>
+            <Link className="btn bg-[#407bff] text-white transition-all" href={pathname + '/5'}>Siniflarni ko&#39;rish</Link>
           </div>
           <div>
             <Image height={170} src={algebra} alt="img" />
@@ -32,7 +32,7 @@ const Page = () => {
               <b className="text-3xl text-center md:text-start">Geometriya</b>
               <p className="text-center md:text-start">5 ta Moderator</p>
             </div>
-            <Link className="btn bg-[#407bff] text-white transition-all" href={pathname + '/5'}>Siniflarni ko'rish</Link>
+            <Link className="btn bg-[#407bff] text-white transition-all" href={pathname + '/5'}>Siniflarni ko&#39;rish</Link>
           </div>
           <div>
             <Image height={170} src={algebra} alt="img" />
@@ -44,7 +44,7 @@ const Page = () => {
               <b className="text-3xl text-center md:text-start">Fizika</b>
               <p className="text-center md:text-start">8 ta Moderator</p>
             </div>
-            <Link className="btn bg-[#407bff] text-white transition-all" href={pathname + '/5'}>Siniflarni ko'rish</Link>
+            <Link className="btn bg-[#407bff] text-white transition-all" href={pathname + '/5'}>Siniflarni ko&#39;rish</Link>
           </div>
           <div>
             <Image height={170} src={algebra} alt="img" />

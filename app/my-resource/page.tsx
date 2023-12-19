@@ -11,7 +11,7 @@ import uncertainScince from '@/app/assets/images/ilustrations/ona===noaniq-fanla
 import biolog from '@/app/assets/images/ilustrations/bilolog.svg'
 import scienceAll from '@/app/assets/images/ilustrations/Professor-bro.svg'
 
-const Page = () => {
+const MyResource = () => {
 
   const pathname = usePathname()
 
@@ -24,7 +24,7 @@ const Page = () => {
               <b className="text-3xl text-center md:text-start">Aniq fanlar</b>
               <p className="text-center md:text-start">6 ta Resource</p>
             </div>
-            <Link className="btn bg-[#407bff] text-white transition-all" href={pathname + '/exact-science'}>Fanlarni ko'rish</Link>
+            <Link className="btn bg-[#407bff] text-white transition-all" href={pathname + '/exact-science'}>Fanlarni ko&#39;rish</Link>
           </div>
           <div>
             <Image height={170} src={exactScience} alt="img" />
@@ -36,7 +36,7 @@ const Page = () => {
               <b className="text-3xl text-center md:text-start">Noaniq fanlar</b>
               <p className="text-center md:text-start">8 ta Resource</p>
             </div>
-            <Link className="btn bg-[#ffc727] text-white transition-all" href={pathname + '/exact-science'}>Fanlarni ko'rish</Link>
+            <Link className="btn bg-[#ffc727] text-white transition-all" href={pathname + '/exact-science'}>Fanlarni ko&#39;rish</Link>
           </div>
           <div>
             <Image height={170} src={uncertainScince} alt="img" />
@@ -48,7 +48,7 @@ const Page = () => {
               <b className="text-3xl text-center md:text-start">Tabiy fanlar</b>
               <p className="text-center md:text-start">6 ta Resource</p>
             </div>
-            <Link className="btn bg-[#92e3a9] text-white transition-all" href={pathname + '/exact-science'}>Fanlarni ko'rish</Link>
+            <Link className="btn bg-[#92e3a9] text-white transition-all" href={pathname + '/exact-science'}>Fanlarni ko&#39;rish</Link>
           </div>
           <div>
             <Image height={170} src={biolog} alt="img" />
@@ -60,7 +60,7 @@ const Page = () => {
               <b className="text-3xl text-center md:text-start">Barcha fanlar</b>
               <p className="text-center md:text-start">34 ta Resource</p>
             </div>
-            <Link className="btn bg-[#FF725E] text-white transition-all" href={pathname + '/exact-science'}>Fanlarni ko'rish</Link>
+            <Link className="btn bg-[#FF725E] text-white transition-all" href={pathname + '/exact-science'}>Fanlarni ko&#39;rish</Link>
           </div>
           <div>
             <Image height={170} src={scienceAll} alt="img" />
@@ -71,4 +71,4 @@ const Page = () => {
   );
 }
 
-export default Page;
+export default MyResource;

@@ -5,7 +5,7 @@ import Image from "next/image";
 // icons
 import { CgProfile } from "react-icons/cg";
 import { FaUserEdit } from "react-icons/fa";
-import { LogoutUser, LogoutUserButton } from "@/utils/Logout";
+import { LogoutUserButton } from "@/utils/Logout";
 
 
 const DropdownUser = () => {
@@ -105,7 +105,7 @@ const DropdownUser = () => {
               className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
             >
               <FaUserEdit />
-              Moderator bo'lish
+              Moderator bo&#39;lish
             </Link>
           </li>
           <li>

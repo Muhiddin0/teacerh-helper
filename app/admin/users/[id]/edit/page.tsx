@@ -72,7 +72,7 @@ const Edit = (props) => {
         {/* header */}
         <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
           <h3 className="font-medium text-black dark:text-white">
-            <b>{user?.first_name}</b>ni O'zgartirish
+            <b>{user?.first_name}</b>ni O&#39;zgartirish
           </h3>
         </div>
 

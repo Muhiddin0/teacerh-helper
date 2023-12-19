@@ -86,7 +86,7 @@ const BekomeModerator = () => {
         {/* header */}
         <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
           <h3 className="font-medium text-black dark:text-white">
-            Moderator bo'lsih uchun ariz topshirish
+            Moderator bo&#39;lsih uchun ariz topshirish
           </h3>
         </div>
 
@@ -143,7 +143,7 @@ const BekomeModerator = () => {
                   requestIsProcced ?
                     <ButtonLoader /> : null
                 }
-                Jo'natish
+                Jo&#39;natish
                 <IoSendSharp />
               </button>
             </div>

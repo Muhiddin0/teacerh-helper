@@ -121,7 +121,7 @@ const Show = (props) => {
             className="inline-flex items-center justify-center gap-2.5 rounded-md bg-danger py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
           >
             <RiDeleteBin6Line />
-            O'chirish
+            O&#39;chirish
           </button>
         </div>
       </div>
@@ -148,7 +148,7 @@ const Show = (props) => {
               Ha
             </button>
             <button onClick={DeleteFormToggler} className="flex gap-2 py-2 px-4 rounded-md bg-primary text-white">
-              Yo'q
+              Yo&#39;q
             </button>
           </div>
         </div>
